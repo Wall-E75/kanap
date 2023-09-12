@@ -64,85 +64,63 @@ function savePanier(cart) {
 
 function getPanier() {
     let cart = localStorage.getItem("addToCart");
-    if (cart == null) {
-        return [];
-    } else {
-        return JSON.parse(cart);
-    }
+    return cart ? JSON.parse(cart) : [];
+
 }
 
 function addpanier(product) {
-    let cart = getPanier();
-    let foundProduct = cart.find(p => p.id == product.id && p.color == product.color);
-    if (foundProduct != undefined) {
-        foundProduct.quantity ++;
+    const cart = getPanier();
+    let foundProduct = cart.find(p => p.id === product.id && p.colors === product.colors);
+    if (foundProduct !== undefined) {
+        foundProduct.quantity += product.quantity; //Ajoute la quantité dans le localStorage
+
     } else {
         product.quantity = 1;
         cart.push(product);
     }
-    savePanier(product)
+    savePanier(cart)
 }
 
+
+
     const cartDomElement = document.getElementById("addToCart"); // Creer une variable pour l'id du button
-    cartDomElement.addEventListener("click", () => { // On écoute le button lors du click
+    cartDomElement.addEventListener("click", async () => { // On écoute le button lors du click
         console.log('Vous avez cliqué sur le bouton !')
         const quantity = parseInt(document.getElementById('quantity').value);// Récupére la quantité saisie et vérifie avec parseInt que c'est un nombre entier
         const color = document.getElementById('colors').value;
+        const imgUrl = document.querySelector('.item__img img').src;
+        const price = document.getElementById("price").innerHTML;
+        const name = document.getElementById("title").innerHTML;
 
        // Création d'un objet représentant le produit et qui stock ses informations
-        const productElement = {
+       const productElement = {
+            image : imgUrl,
+            price: price ,
+            title: name,
             quantity : quantity,
             colors: color,
             id : id
         }  
-        console.log(productElement);
-        //Cette boucle vérifie si la quantité est un nombre supérieur ou égale à 1 et si la couleur n'est pas vide
-        if ((isNaN(quantity) || quantity < 1) || (color === '')) {
+        console.log(productElement.image);
+        
+        //console.log(productElement);
+        /**Cette boucle vérifie si la quantité est un nombre supérieur ou égale à 1
+         * Si la couleur est selectionné
+         * 
+         */ 
+        if (isNaN(quantity) || quantity < 1 || color === '') {
             cartDomElement.style.boxShadow = '0 0 22px 6px rgba(217, 39, 39, 0.6)';
-            alert("veuillez entrer une quantité et une couleur.");
+            alert("Veuillez choisir une quantité et une couleur svp.");
+            return;
+        } /*else if ((isNaN(quantity) || quantity < 1) && (color === color)) {
+            cartDomElement.style.boxShadow = '0 0 22px 6px rgba(217, 39, 39, 0.6)';
+            alert("Veuillez choisir une quantité svp.");
+        } else if ((quantity == quantity) && (color == '')) {
+            cartDomElement.style.boxShadow = '0 0 22px 6px rgba(217, 39, 39, 0.6)';
+            alert("Veuillez choisir une couleur svp.");
             return
-        }
-
-        
-
-        savePanier();
-        getPanier();
-        addpanier();
-        //localStorage.setItem("addToCart", JSON.stringify(productElement))
-
-        //Initialisation d'un tableau pour stocker les articles dans le panier
-        //let productInCart = [];
-
-        //localStorage.getItem('addToCart')
-        let productInCart = localStorage.getItem("addToCart");
-        
-        
-        /**Cette condition vérifie si des articles sont déjà dans le panier
-         * Si oui elle les récupére pour les stocker dans le tableau
-          */
-       if(productInCart == null) { 
-            return [];
-             
-        } else {
-            return JSON.parse(productInCart);
-
-        }
-
-
-
-        //let foundProduct = productInCart.find(product => product.color == color && product.id == id);
-        //console.log(foundProduct)
-
-       /* if (foundProduct !== undefined) {
-            foundProduct.quantity ++;
-        } else {
-            product.quantity = 1;
-            productInCart.push(productElement)//Ajoute les nouveaux éléments au panier
-            console.log(productInCart)
-        }
-        
-        localStorage.setItem("addToCart", JSON.stringify(productInCart));
-        console.log('Article ajouté !')*/
+        }*/
+        addpanier(productElement);
     
     })
 
