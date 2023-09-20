@@ -82,7 +82,10 @@ function addpanier(product) {
 }
 
 
-
+/**
+ * Création d'un événement afin de mettre les canape dans le panier lors du clic sur le bouton
+ * 
+ */
     const cartDomElement = document.getElementById("addToCart"); // Creer une variable pour l'id du button
     cartDomElement.addEventListener("click", async () => { // On écoute le button lors du click
         console.log('Vous avez cliqué sur le bouton !')

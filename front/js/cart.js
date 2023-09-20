@@ -1,4 +1,8 @@
 //Récupére les donnée du localstorage stockées via la page produit
+function savePanier(cart) {
+  localStorage.setItem("addToCart", JSON.stringify(cart));
+}
+
 function getPanier() {
   let cart = localStorage.getItem("addToCart");
   return cart ? JSON.parse(cart) : [];
@@ -18,6 +22,7 @@ function getPanier() {
 
 const products = getPanier();
 // console.log({products})
+//Mise en relation avec les elements du DOM
 const sectionCartItem = document.getElementById("cart__items");
 const spanTotalQuantity = document.getElementById("totalQuantity");
 const spanTotalPrice = document.getElementById("totalPrice");
@@ -25,7 +30,10 @@ const firstNameError = document.getElementById("firstNameErrorMsg");
 const imageDomElement = document.querySelector('.cart__item__img');
 
 
-
+/**
+ * La fonction afficherCanape permet d'afficher les canapés du localStorage 
+ * à l'intérieur de la page Panier lors du chargement de la page
+ */
 const afficherCanape = async () => {
   // sectionCartItem.innerHTML = 'Wali silla'
   if (products.length > 0) {
@@ -60,10 +68,22 @@ const afficherCanape = async () => {
 }
 console.log(products)
 afficherCanape()
+
+
 const deleteItemDomElement = document.querySelector('.deleteItem');
-deleteItemDomElement.addEventListener("click", () => {
-  console.log('Supprimé');
-  localStorage.removeItem("")
+sectionCartItem.addEventListener("click", (e) => {
+  if (e.target.classList.contains("deleteItem")) {
+  const products = getPanier();
+  const productId = e.target.closest(".cart__item").getAttribute("data-id");
+  const productColor = e.target.closest(".cart__item").getAttribute("data-color");
+
+  const removeProduct = products.filter((product) => (product.id !== productId) && (product.color !== productColor));
+  savePanier(removeProduct)
+  
+  console.log(productColor);
+  console.log(productId)
+  afficherCanape();
+}
 });
 
 console.log(localStorage)
@@ -72,6 +92,34 @@ console.log(localStorage)
 const addiitionPrix = products.map(product => product.price * product.quantity);
 
 console.log(addiitionPrix);
+
+
+const itemQuantityDomElements = document.querySelectorAll("input.itemQuantity");
+itemQuantityDomElements.forEach(itemQuantityDomElement => {
+  itemQuantityDomElement.addEventListener("change", (e) => {
+    const productId = e.currentTarget.closest(".cart__item").getAttribute("data-id");
+    const productColor = e.currentTarget.closest(".cart__item").getAttribute("data-color");
+    const cart = getPanier();
+    const valeurActuel = parseInt(e.currentTarget.value);
+    console.log(valeurActuel)
+    if(!isNaN(valeurActuel)) {
+      
+      cart.forEach((product) => {
+        if ((product.id === productId) && (product.color === productColor)) {
+          product.quantity = valeurActuel;
+        }
+      })
+    }
+    savePanier(cart);
+})
+})
+
+
+//const modifQuantity = () => {
+  //const dataId  = itemQuantityDomElement.closest(".cart__Item");
+//}
+
+//console.log(itemQuantityDomElement.closest(".cart__item"))
 
 
 /*const afficherCanape = async () => {
