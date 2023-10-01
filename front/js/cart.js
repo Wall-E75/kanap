@@ -2,26 +2,17 @@
 function savePanier(cart) {
   localStorage.setItem("addToCart", JSON.stringify(cart));
 }
-
+/**
+ * 
+ * @returns renvoi
+ */
 function getPanier() {
   let cart = localStorage.getItem("addToCart");
   return cart ? JSON.parse(cart) : [];
 }
-
-//console.log(getPanier());
-
-//const getCanape = async () => {
-  //try {
-    //const url = await fetch(`http://localhost:3000/api/products`);
-    //const reponse = await url.json();
-    //return reponse;
-  //} catch (erreur) {
-    //console.error("Une erreur s'est produite lors de l'importation des canape")
-  //}
-//}
-
+// Variable pour utiliser les produits dans le localStorage
 const products = getPanier();
-// console.log({products})
+
 //Mise en relation avec les elements du DOM
 const sectionCartItem = document.getElementById("cart__items");
 const spanTotalQuantity = document.getElementById("totalQuantity");
@@ -35,12 +26,12 @@ const imageDomElement = document.querySelector('.cart__item__img');
  * à l'intérieur de la page Panier lors du chargement de la page
  */
 const afficherCanape = async () => {
-  // sectionCartItem.innerHTML = 'Wali silla'
+  
   if (products.length > 0) {
-    // const canapeData = await getCanape();
-    // console.log(products.length > 0, canapeData)
-    let htmlString = ''
+    
+    let htmlString = '';
     products.forEach((product) => {
+
       htmlString += `<article class="cart__item" data-id="${product.id}" data-color="${product.colors}">
          <div class="cart__item__img">
             <img src="${product.image}" alt="Photographie d'un canapé">
@@ -49,7 +40,7 @@ const afficherCanape = async () => {
            <div class="cart__item__content__description">
              <h2>${product.title? product.title: 'no title added'}</h2>
              <p>${product.colors}</p>
-             <p>${product.price? product.price: 'no price added'} €</p>
+             <p>${product.total? product.total: 'no price added'} €</p>
            </div>
            <div class="cart__item__content__settings">
              <div class="cart__item__content__settings__quantity">
@@ -62,40 +53,37 @@ const afficherCanape = async () => {
            </div>
          </div>
        </article>`
-    })
-    sectionCartItem.innerHTML = htmlString
+    });
+    sectionCartItem.innerHTML = htmlString;
   }
 }
-console.log(products)
+//console.log(products)
 afficherCanape()
 
-
-const deleteItemDomElement = document.querySelector('.deleteItem');
 sectionCartItem.addEventListener("click", (e) => {
   if (e.target.classList.contains("deleteItem")) {
-  const products = getPanier();
   const productId = e.target.closest(".cart__item").getAttribute("data-id");
   const productColor = e.target.closest(".cart__item").getAttribute("data-color");
 
-  const removeProduct = products.filter((product) => (product.id !== productId) && (product.color !== productColor));
+  const removeProduct = products.filter((product) => {
+    return product.id === productId && product.colors !== productColor
+  });
   savePanier(removeProduct)
+
   
-  console.log(productColor);
-  console.log(productId)
+  // console.log(productColor);
+  // console.log(productId)
+  // console.log('===')
+  // console.log(removeProduct)
   afficherCanape();
+  window.location.reload()
 }
 });
 
 console.log(localStorage)
 
-//const noms = products.map(product => product.title);
-const addiitionPrix = products.map(product => product.price * product.quantity);
-
-console.log(addiitionPrix);
-
-
 const itemQuantityDomElements = document.querySelectorAll("input.itemQuantity");
-itemQuantityDomElements.forEach(itemQuantityDomElement => {
+itemQuantityDomElements.forEach((itemQuantityDomElement) => {
   itemQuantityDomElement.addEventListener("change", (e) => {
     const productId = e.currentTarget.closest(".cart__item").getAttribute("data-id");
     const productColor = e.currentTarget.closest(".cart__item").getAttribute("data-color");
@@ -105,8 +93,11 @@ itemQuantityDomElements.forEach(itemQuantityDomElement => {
     if(!isNaN(valeurActuel)) {
       
       cart.forEach((product) => {
-        if ((product.id === productId) && (product.color === productColor)) {
+        if ((product.id === productId) && (product.colors === productColor)) {
+          console.log('ca marche');
           product.quantity = valeurActuel;
+        } else {
+          console.log('ça ne marche pas mec !')
         }
       })
     }
@@ -114,65 +105,23 @@ itemQuantityDomElements.forEach(itemQuantityDomElement => {
 })
 })
 
+/**
+ * Calcul du total des articles. 
+ */
+const additionPrix = () => {
+  spanTotalPrice
+  if (products.length > 0) {
+  let totalPrice = 0;
+ 
+  products.forEach(product => {
+    totalPrice += (product.price * product.quantity);
+  });
 
-//const modifQuantity = () => {
-  //const dataId  = itemQuantityDomElement.closest(".cart__Item");
-//}
-
-//console.log(itemQuantityDomElement.closest(".cart__item"))
-
-
-/*const afficherCanape = async () => {
-  try {
-      const getP = await getPanier();
-      const sectionCartItem = document.getElementById("cart__items");
-      const spanTotalQuantity = document.getElementById("totalQuantity");
-      const spanTotalPrice = document.getElementById("totalPrice");
-      const firstNameError = document.getElementById("firstNameErrorMsg");
-
-      //sectionCartItem.innerHTML = ''; //Efface le contenu existant avant d'ajouter les produits
-
-      let totalQuantity = 0;
-      let totalPrice = 0;
-
-      for (let product of getP) { 
-        // Recupére les détails complets depuis l'API
-        const canapeData = await getCanape(product.id);
-        console.log('Product:', product);
-        console.log('CanapeData:', canapeData);
-        if (canapeData) {
-          sectionCartItem.innerHTML += `<article class="cart__item" data-id="${product.id}" data-color="${product.color}">
-          <div class="cart__item__img">
-            <img src="../images/${canapeData.imgUrl}" alt="${canapeData.altTxt}">
-          </div>
-          <div class="cart__item__content">
-            <div class="cart__item__content__description">
-              <h2>${canapeData.name}</h2>
-              <p>${canapeData.color}</p>
-              <p>${canapeData.price}</p>
-            </div>
-            <div class="cart__item__content__settings">
-              <div class="cart__item__content__settings__quantity">
-                <p>Qté : </p>
-                <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="42">
-              </div>
-              <div class="cart__item__content__settings__delete">
-                <p class="deleteItem">Supprimer</p>
-              </div>
-            </div>
-          </div>
-        </article>`;
-        }
-        // Met à jour le total de la quantité et du prix
-        totalQuantity += product.quantity;
-        totalPrice += product.price * product.quantity;
-      }
-    spanTotalQuantity.innerHTML = totalQuantity;
-    spanTotalPrice.innerHTML = totalPrice + " €";
-  } catch (erreur) {
-    console.error("Une erreur s'est produite lors de l'affichage des produits")
+  spanTotalPrice.textContent = totalPrice + " €";
   }
+}
 
-};
+additionPrix();
+
 //Appele la fonction pour afficher las produits du panier au moment du chargement de la page
-window.addEventListener("load", afficherCanape);*/
+//window.addEventListener("load", afficherCanape);

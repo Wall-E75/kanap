@@ -1,17 +1,14 @@
-/*const url = "http://localhost:3000/api/products"
-const params = new URL(url);
-const name = url.searchParams.get("name");
-console.log(params);*/
-
 /**
- * Je souhaitais utiliser un import export entre script.js et cette page pour faire le lien avec les images de produits de index.html et leurs page produits.
- * Par la suite je souhaitais creer une fonction qui récupererait les infos d'un produit pour les afficher dans la page produits.html au clic sur l'image dans index.html
+ * Extraction du paramètre "id" de l'URL afin de determiner quel produit afficher.
  * 
  */
 const params = new URL(document.location).searchParams;
 const id = params.get("id"); // Permet de pointer le id du canape
 
-// On rajoute dans l'URL id qui va nous permettre de recupérer le bon produit
+/**
+ * On utilise l'ID extrait pour ffaire une requete HTTP à l'API pour obtenir les informations du produit correspondant.
+ * @returns la réponse est ensuite transformée en JSON
+ */
 const getCanape = async () => {       
     try {
         const url = await fetch(`http://localhost:3000/api/products/${id}`);
@@ -23,7 +20,7 @@ const getCanape = async () => {
 }
 /**
  * Cette fonction fait le lien entre les éléments du DOM est les canape de l'API
- * Elle permet d'afficher les différentes informations du canape
+ * Elle permet d'afficher les différentes informations du canape;
  */
 
 const fillCanapeData = async () => {
@@ -34,7 +31,7 @@ const fillCanapeData = async () => {
     const prixDomElement = document.getElementById('price');
     const optionsDomElement = document.getElementById('colors');    
     const imageDomElement = document.querySelector('.item__img');
-    const quantityDomElement = document.getElementById('quantity');
+    
 
     const imageElement = document.createElement('img');
     // On insere les bonnes informations au bon endroit
@@ -51,6 +48,11 @@ const fillCanapeData = async () => {
 };
 
 
+
+
+const quantityDomElement = document.getElementById('quantity');
+console.log(quantityDomElement);
+
 /**
  * Ajout des éléments dans le panier
  * On pointe le panier dans le DOM
@@ -58,27 +60,59 @@ const fillCanapeData = async () => {
  * Création d'un objet qui stock les détails du produit, on va pouvoir utiliser avec localeStorage
  */
 
+/**
+ * Enregistre le contenu du panier dans le localStorage.
+ * @param {Array} cart - Le tableau représentant le contenu du panier à enregistrer.
+ */
 function savePanier(cart) {
     localStorage.setItem("addToCart", JSON.stringify(cart));
 }
 
+/**
+ * Récupére le contenu du panier à partir du localStorage ou retourne un tableau vide s'il n'y a rien enregistré.
+ * @returns {Array} - Le tableau représentant le contenu du panier
+ */
 function getPanier() {
     let cart = localStorage.getItem("addToCart");
     return cart ? JSON.parse(cart) : [];
 
 }
 
+/**
+ * 
+ * @param {Object} product - L'objet représentant le produit à ajouter ou mettre à jour dans le panier.
+ * @returns 
+ */
 function addpanier(product) {
     const cart = getPanier();
     let foundProduct = cart.find(p => p.id === product.id && p.colors === product.colors);
-    if (foundProduct !== undefined) {
-        foundProduct.quantity += product.quantity; //Ajoute la quantité dans le localStorage
-
-    } else {
-        product.quantity = 1;
+    if(foundProduct === undefined) {
         cart.push(product);
+        //savePanier(cart)
+    } else if (typeof foundProduct === 'object') {
+        foundProduct.quantity += product.quantity;
+    }
+
+    cart.forEach(cartItem => {
+        cartItem.total = cartItem.price * cartItem.quantity;
+    })
+
+    savePanier(cart);
+//Si fundProduct n'est pas undefind et est un objet alors le produit existe dans le panier.
+   /* if (typeof foundProduct === 'object') {
+        const newCart = cart.map((cartItem) => {
+            if(cartItem.id === product.id && cartItem.colors === product.colors) {
+                const number = cartItem.quantity + product.quantity;
+                cartItem.quantity = number                               
+            }
+            return cartItem;             
+        })
+        savePanier(newCart)
+       
+        return 
     }
     savePanier(cart)
+    return */
 }
 
 
@@ -115,14 +149,7 @@ function addpanier(product) {
             cartDomElement.style.boxShadow = '0 0 22px 6px rgba(217, 39, 39, 0.6)';
             alert("Veuillez choisir une quantité et une couleur svp.");
             return;
-        } /*else if ((isNaN(quantity) || quantity < 1) && (color === color)) {
-            cartDomElement.style.boxShadow = '0 0 22px 6px rgba(217, 39, 39, 0.6)';
-            alert("Veuillez choisir une quantité svp.");
-        } else if ((quantity == quantity) && (color == '')) {
-            cartDomElement.style.boxShadow = '0 0 22px 6px rgba(217, 39, 39, 0.6)';
-            alert("Veuillez choisir une couleur svp.");
-            return
-        }*/
+        }
         addpanier(productElement);
     
     })
