@@ -76,12 +76,19 @@ sectionCartItem.addEventListener("click", (e) => {
   // console.log('===')
   // console.log(removeProduct)
   afficherCanape();
+  //window.addEventListener("load", afficherCanape);
   window.location.reload()
 }
 });
 
-console.log(localStorage)
+console.log(localStorage);
 
+
+/**
+ * Utilise un écouteur d'evenement (change) afin de mettre à jour plusieurs élément lors du changement de quantité :
+ * Le localStorage : la quantité et le total affiché affiche le même résultat que sur la page.
+ * Fais une opération pour mettre à jour le résultat
+ */
 const itemQuantityDomElements = document.querySelectorAll("input.itemQuantity");
 itemQuantityDomElements.forEach((itemQuantityDomElement) => {
   itemQuantityDomElement.addEventListener("change", (e) => {
@@ -96,12 +103,14 @@ itemQuantityDomElements.forEach((itemQuantityDomElement) => {
         if ((product.id === productId) && (product.colors === productColor)) {
           console.log('ca marche');
           product.quantity = valeurActuel;
+          product.total = product.quantity * product.price;
         } else {
           console.log('ça ne marche pas mec !')
         }
       })
     }
     savePanier(cart);
+    window.location.reload();
 })
 })
 
@@ -125,3 +134,39 @@ additionPrix();
 
 //Appele la fonction pour afficher las produits du panier au moment du chargement de la page
 //window.addEventListener("load", afficherCanape);
+
+
+/*Récupération du champ de saisie*/
+
+const baliseCommander = document.getElementById("order");  
+  baliseCommander.addEventListener("click",(e) => {
+    const baliseNom = document.getElementById("lastName");
+    const balisePrenom = document.getElementById("firstName");
+    const baliseAdresse = document.getElementById("address");
+    const baliseVille = document.getElementById("city");
+    const baliseMAil = document.getElementById("email");
+    
+
+    let nom = baliseNom.value;
+    let prenom = balisePrenom.value;
+    let adresse = baliseAdresse.value;
+    let ville = baliseVille.value;
+    let email = baliseMAil.value;
+
+    console.log(prenom);
+    console.log('===');
+    console.log(nom);
+    console.log('+++');
+    console.log(adresse);
+    console.log('---');
+    console.log(ville);
+    console.log('***');
+    console.log(email);
+    
+
+    e.preventDefault();
+  })
+
+  
+
+  
