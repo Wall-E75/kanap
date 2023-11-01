@@ -57,7 +57,7 @@ const afficherCanape = async () => {
     sectionCartItem.innerHTML = htmlString;
   }
 }
-//console.log(products)
+
 afficherCanape()
 
 sectionCartItem.addEventListener("click", (e) => {
@@ -71,10 +71,6 @@ sectionCartItem.addEventListener("click", (e) => {
   savePanier(removeProduct)
 
   
-  // console.log(productColor);
-  // console.log(productId)
-  // console.log('===')
-  // console.log(removeProduct)
   afficherCanape();
   //window.addEventListener("load", afficherCanape);
   window.location.reload()
@@ -132,39 +128,86 @@ const additionPrix = () => {
 
 additionPrix();
 
-//Appele la fonction pour afficher las produits du panier au moment du chargement de la page
+//Appel la fonction pour afficher las produits du panier au moment du chargement de la page
 //window.addEventListener("load", afficherCanape);
 
 
 /*Récupération du champ de saisie*/
-
-const baliseCommander = document.getElementById("order");  
-  baliseCommander.addEventListener("click",(e) => {
     const baliseNom = document.getElementById("lastName");
     const balisePrenom = document.getElementById("firstName");
     const baliseAdresse = document.getElementById("address");
     const baliseVille = document.getElementById("city");
     const baliseMAil = document.getElementById("email");
+    console.log(baliseMAil)
+
+    /**
+     * Cette fonction permet de vérifier si l'adresse mail entré dans le formulaire est correcte.
+     * Elle contient un RegExp afin de vérifier si les caractères respectent le format d'une adresse mail.
+     * @param {string} mail - l'adresse mail du formulaire.
+     * @returns {boolean}
+     */
+    function validerEmail(mail) {
+      let emailRegEx = new RegExp("[a-z0-9._-]+@[a-z0-9._-]+\.[a-z0-9._-]+");
+      if (emailRegEx.test(mail)) {
+        return true
+      }
+      return false
+    } 
+
+    function validerFormulaire(champ) {
+      if (champ.value === "") {
+        throw new Error(`Le champ est vide`)
+
+      }
+    }
+
+const formCommande = document.querySelector("form");  
+  formCommande.addEventListener("submit", async (event) => {
     
+        console.log("C'est cliqué !")
+        event.preventDefault();
 
-    let nom = baliseNom.value;
-    let prenom = balisePrenom.value;
-    let adresse = baliseAdresse.value;
-    let ville = baliseVille.value;
-    let email = baliseMAil.value;
+        validerFormulaire(baliseNom.value);
+        validerFormulaire(balisePrenom.value);
+        validerFormulaire(baliseAdresse);
+        validerFormulaire(baliseVille);
+        validerFormulaire(baliseMAil);
 
-    console.log(prenom);
-    console.log('===');
-    console.log(nom);
-    console.log('+++');
-    console.log(adresse);
-    console.log('---');
-    console.log(ville);
-    console.log('***');
-    console.log(email);
-    
+    try {  
+          const contact = {
+            prenom : balisePrenom.value,
+            nom : baliseNom.value,
+            adresse : baliseAdresse.value,
+            ville : baliseVille.value,
+            email : baliseMAil.value
+        }
 
-    e.preventDefault();
+        validerEmail(contact.email);
+
+          const products = getPanier();
+          const commande = {
+            contact,
+            produits: products, 
+          };
+
+          console.log(products);
+        
+          console.log(contact);
+          const reponse = await fetch(`http://localhost:3000/api/cart/commande`, {
+            method: "POST",
+            headers: {
+              "Content-type": "application/json;",
+            },
+            body: JSON.stringify(commande),
+
+          });
+
+          let result = await reponse.json();
+          alert(result.message);
+          
+      } catch (error) {
+        console.log("Une erreur est survenue : " + error.message)
+      }
   })
 
   
