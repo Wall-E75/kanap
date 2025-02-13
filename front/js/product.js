@@ -98,21 +98,7 @@ function addpanier(product) {
     })
 
     savePanier(cart);
-//Si fundProduct n'est pas undefind et est un objet alors le produit existe dans le panier.
-   /* if (typeof foundProduct === 'object') {
-        const newCart = cart.map((cartItem) => {
-            if(cartItem.id === product.id && cartItem.colors === product.colors) {
-                const number = cartItem.quantity + product.quantity;
-                cartItem.quantity = number                               
-            }
-            return cartItem;             
-        })
-        savePanier(newCart)
-       
-        return 
-    }
-    savePanier(cart)
-    return */
+
 }
 
 
@@ -140,7 +126,7 @@ function addpanier(product) {
         }  
         console.log(productElement.image);
         
-        //console.log(productElement);
+      
         /**Cette boucle vérifie si la quantité est un nombre supérieur ou égale à 1
          * Si la couleur est selectionné
          * 
@@ -154,7 +140,6 @@ function addpanier(product) {
     
     })
 
-    
 
 
 fillCanapeData() 

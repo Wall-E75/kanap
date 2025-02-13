@@ -154,59 +154,83 @@ additionPrix();
       return false
     } 
 
-    function validerFormulaire(champ) {
-      if (champ.value === "") {
-        throw new Error(`Le champ est vide`)
+    // function validerFormulaire(champ) {
+    //   if (champ.value === "") {
+    //     throw new Error(`Le champ est vide`)
 
+    //   }
+    // }
+    function validerFormulaire(contact, productIds) {
+      if (
+        typeof contact.firstName !== 'string' ||
+        typeof contact.lastName !== 'string' ||
+        typeof contact.address !== 'string' ||
+        typeof contact.city !== 'string' ||
+        typeof contact.email !== 'string'
+      ) {
+        throw new Error('Les champs du formulaire ne sont pas valides');
+      }
+      //La methode Array.isArray permet de déterminer si la valeur transmise est un tableau
+      if(!Array.isArray(productIds) || productIds.some(id => typeof id !== 'string')) {
+        throw new Error('Le tableau des product-ID est invalide.');
       }
     }
 
 const formCommande = document.querySelector("form");  
   formCommande.addEventListener("submit", async (event) => {
     
-        console.log("C'est cliqué !")
+        console.log("C'est cliqué !");
         event.preventDefault();
-
-        validerFormulaire(baliseNom.value);
-        validerFormulaire(balisePrenom.value);
-        validerFormulaire(baliseAdresse);
-        validerFormulaire(baliseVille);
-        validerFormulaire(baliseMAil);
-
     try {  
           const contact = {
-            prenom : balisePrenom.value,
-            nom : baliseNom.value,
-            adresse : baliseAdresse.value,
-            ville : baliseVille.value,
+            firstName : balisePrenom.value,
+            lastName : baliseNom.value,
+            address : baliseAdresse.value,
+            city : baliseVille.value,
             email : baliseMAil.value
-        }
+          }
 
-        validerEmail(contact.email);
+          //Vérification du format de l'adresse mail
+          validerEmail(contact.email);
 
+          //Parcours le tableau des produits afin d'en sortir uniquement l'Id.
           const products = getPanier();
+          const productsIds = products.map(product => product.id); 
+          const productsItems = products.map(product => product);
+
+          //Validation des données avant l'envoi du formulaire
+          validerFormulaire(contact, productsIds);
+
+          
           const commande = {
             contact,
-            produits: products, 
+            products,
+            id : productsIds, 
           };
 
-          console.log(products);
-        
-          console.log(contact);
-          const reponse = await fetch(`http://localhost:3000/api/cart/commande`, {
-            method: "POST",
-            headers: {
-              "Content-type": "application/json;",
-            },
-            body: JSON.stringify(commande),
+          console.log('Product Ids => ', productsIds);
+          console.log('Contact => ', contact);
+          console.log('Taille du tableau => ', products.length);
+          console.log('Produits => ', productsItems);
+          console.log('Commande => ', commande);
+
+          const reponse = await fetch(`http://localhost:3000/api/products/order`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({contact, products: productsIds}),
 
           });
 
           let result = await reponse.json();
-          alert(result.message);
+          console.log('Result ID =>', result.orderId);
+          console.log('Result Contact =>', result.contact);
+          console.log('Result Products =>', result.products);
+  
+          window.location.href = './confirmation.html?orderId=' + result.orderId + '&total=' + spanTotalPrice.textContent;
+          // alert(result.message);
           
       } catch (error) {
-        console.log("Une erreur est survenue : " + error.message)
+        console.error("Une erreur est survenue : " + error.message)
       }
   })
 
