@@ -25,7 +25,6 @@ const getCanape = async () => {
 
 const fillCanapeData = async () => {
     const canapeData = await getCanape()
-    console.log(canapeData)
     const descrptionDomElement = document.getElementById('description');
     const nameDomElement = document.getElementById('title');
     const prixDomElement = document.getElementById('price');
@@ -41,7 +40,6 @@ const fillCanapeData = async () => {
     for (i in canapeData.colors) {
     optionsDomElement.innerHTML += `<option value=${canapeData.colors[i]}>${canapeData.colors[i]}</option>`
     };
-    console.log(optionsDomElement);
     imageDomElement.appendChild(imageElement);
     imageElement.setAttribute('src', `${canapeData.imageUrl}`);
     imageElement.setAttribute('alt', `${canapeData.altTxt}`);
@@ -51,7 +49,6 @@ const fillCanapeData = async () => {
 
 
 const quantityDomElement = document.getElementById('quantity');
-console.log(quantityDomElement);
 
 /**
  * Ajout des éléments dans le panier
@@ -108,7 +105,6 @@ function addpanier(product) {
  */
     const cartDomElement = document.getElementById("addToCart"); // Creer une variable pour l'id du button
     cartDomElement.addEventListener("click", async () => { // On écoute le button lors du click
-        console.log('Vous avez cliqué sur le bouton !')
         const quantity = parseInt(document.getElementById('quantity').value);// Récupére la quantité saisie et vérifie avec parseInt que c'est un nombre entier
         const color = document.getElementById('colors').value;
         const imgUrl = document.querySelector('.item__img img').src;
@@ -124,14 +120,13 @@ function addpanier(product) {
             colors: color,
             id : id
         }  
-        console.log(productElement.image);
         
       
         /**Cette boucle vérifie si la quantité est un nombre supérieur ou égale à 1
          * Si la couleur est selectionné
          * 
          */ 
-        if (isNaN(quantity) || quantity < 1 || color === '') {
+        if (isNaN(quantity) || quantity < 1 || quantity > 100 || color === '') {
             cartDomElement.style.boxShadow = '0 0 22px 6px rgba(217, 39, 39, 0.6)';
             alert("Veuillez choisir une quantité et une couleur svp.");
             return;

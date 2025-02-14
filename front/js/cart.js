@@ -77,7 +77,6 @@ sectionCartItem.addEventListener("click", (e) => {
 }
 });
 
-console.log(localStorage);
 
 
 /**
@@ -92,12 +91,10 @@ itemQuantityDomElements.forEach((itemQuantityDomElement) => {
     const productColor = e.currentTarget.closest(".cart__item").getAttribute("data-color");
     const cart = getPanier();
     const valeurActuel = parseInt(e.currentTarget.value);
-    console.log(valeurActuel)
     if(!isNaN(valeurActuel)) {
       
       cart.forEach((product) => {
         if ((product.id === productId) && (product.colors === productColor)) {
-          console.log('ca marche');
           product.quantity = valeurActuel;
           product.total = product.quantity * product.price;
         } else {
@@ -138,7 +135,6 @@ additionPrix();
     const baliseAdresse = document.getElementById("address");
     const baliseVille = document.getElementById("city");
     const baliseMAil = document.getElementById("email");
-    console.log(baliseMAil)
 
     /**
      * Cette fonction permet de vérifier si l'adresse mail entré dans le formulaire est correcte.
@@ -179,7 +175,6 @@ additionPrix();
 const formCommande = document.querySelector("form");  
   formCommande.addEventListener("submit", async (event) => {
     
-        console.log("C'est cliqué !");
         event.preventDefault();
     try {  
           const contact = {
@@ -208,11 +203,7 @@ const formCommande = document.querySelector("form");
             id : productsIds, 
           };
 
-          console.log('Product Ids => ', productsIds);
-          console.log('Contact => ', contact);
-          console.log('Taille du tableau => ', products.length);
-          console.log('Produits => ', productsItems);
-          console.log('Commande => ', commande);
+         
 
           const reponse = await fetch(`http://localhost:3000/api/products/order`, {
             method: 'POST',
@@ -222,9 +213,7 @@ const formCommande = document.querySelector("form");
           });
 
           let result = await reponse.json();
-          console.log('Result ID =>', result.orderId);
-          console.log('Result Contact =>', result.contact);
-          console.log('Result Products =>', result.products);
+         
   
           window.location.href = './confirmation.html?orderId=' + result.orderId + '&total=' + spanTotalPrice.textContent;
           // alert(result.message);

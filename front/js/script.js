@@ -11,7 +11,6 @@ const getProducts = async () => {
     try {
         const url = await fetch("http://localhost:3000/api/products");
         const reponse = await url.json();
-        console.log(reponse)
         return reponse;
     } catch (erreur) {
         console.error("Une erreur s'est produite lors de la récupération : ", erreur);
@@ -31,7 +30,6 @@ const showProducts = async () => {
         // Création du lien avec le DOM
         const sectionItem = document.getElementById("items")
         for (let i = 0; i < products.length; i++) {
-            console.log(i)
             sectionItem.innerHTML += `<a href="./product.html?id=${products[i]._id}">
             <article>
               <img src="${products[i].imageUrl}" alt="${products[i].altTtxt}">
