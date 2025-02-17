@@ -75,6 +75,7 @@
 }
 .item__content__addButton {
 	display: flex;
+	/* flex-direction: column; */
 	justify-content: center;
 	padding-top: 32px;
 }

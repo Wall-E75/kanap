@@ -126,9 +126,17 @@ function addpanier(product) {
          * Si la couleur est selectionné
          * 
          */ 
+     
+
         if (isNaN(quantity) || quantity < 1 || quantity > 100 || color === '') {
+            const alertText = document.createElement('p');
+            document.querySelector('.item__content').appendChild(alertText)
+            alertText.innerHTML = "Veuillez choisir une quantité et une couleur svp.";
+            alertText.style.color = 'red';
+            alertText.style.fontWeight = 'bold';
+            alertText.style.textAlign = 'center';
             cartDomElement.style.boxShadow = '0 0 22px 6px rgba(217, 39, 39, 0.6)';
-            alert("Veuillez choisir une quantité et une couleur svp.");
+
             return;
         }
         addpanier(productElement);
